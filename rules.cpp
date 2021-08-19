@@ -6,20 +6,20 @@
 std::vector<Move> get_valid_bishop_moves(Board *board, int i, int j) {
     std::vector<Move> move_list;
 
-    int color = board->pos[i][j] % 2;
+    int color = get_piece(board, i, j) % 2;
 
     for (int ii = 1; ii < 8; ii++) {
         int new_i = i+ii;
         int new_j = j+ii;
         if (new_i >= 0 && new_i < 8 && new_j >= 0 && new_j < 8) {
-            if (board->pos[new_i][new_j] == EMPTY || board->pos[new_i][new_j] % 2 != color) {
+            if (board->pos[new_i][new_j] == EMPTY || get_piece(board, new_i, new_j) % 2 != color) {
                 Move move = {
                         { (uint8_t) i, (uint8_t) j },
                         { (uint8_t) new_i, (uint8_t) new_j }
                 };
                 move_list.push_back(move);
             }
-            if (board->pos[new_i][new_j] != EMPTY) {
+            if (get_piece(board, new_i, new_j) != EMPTY) {
                 break;
             }
         }
@@ -29,14 +29,14 @@ std::vector<Move> get_valid_bishop_moves(Board *board, int i, int j) {
         int new_i = i+ii;
         int new_j = j-ii;
         if (new_i >= 0 && new_i < 8 && new_j >= 0 && new_j < 8) {
-            if (board->pos[new_i][new_j] == EMPTY || board->pos[new_i][new_j] % 2 != color) {
+            if (get_piece(board, new_i, new_j) == EMPTY || get_piece(board, new_i, new_j) % 2 != color) {
                 Move move = {
                         { (uint8_t) i, (uint8_t) j },
                         { (uint8_t) new_i, (uint8_t) new_j }
                 };
                 move_list.push_back(move);
             }
-            if (board->pos[new_i][new_j] != EMPTY) {
+            if (get_piece(board, new_i, new_j) != EMPTY) {
                 break;
             }
         }
@@ -46,14 +46,14 @@ std::vector<Move> get_valid_bishop_moves(Board *board, int i, int j) {
         int new_i = i-ii;
         int new_j = j-ii;
         if (new_i >= 0 && new_i < 8 && new_j >= 0 && new_j < 8) {
-            if (board->pos[new_i][new_j] == EMPTY || board->pos[new_i][new_j] % 2 != color) {
+            if (get_piece(board, new_i, new_j) == EMPTY || get_piece(board, new_i, new_j) % 2 != color) {
                 Move move = {
                         { (uint8_t) i, (uint8_t) j },
                         { (uint8_t) new_i, (uint8_t) new_j }
                 };
                 move_list.push_back(move);
             }
-            if (board->pos[new_i][new_j] != EMPTY) {
+            if (get_piece(board, new_i, new_j) != EMPTY) {
                 break;
             }
         }
@@ -63,14 +63,14 @@ std::vector<Move> get_valid_bishop_moves(Board *board, int i, int j) {
         int new_i = i-ii;
         int new_j = j+ii;
         if (new_i >= 0 && new_i < 8 && new_j >= 0 && new_j < 8) {
-            if (board->pos[new_i][new_j] == EMPTY || board->pos[new_i][new_j] % 2 != color) {
+            if (get_piece(board, new_i, new_j) == EMPTY || get_piece(board, new_i, new_j) % 2 != color) {
                 Move move = {
                         { (uint8_t) i, (uint8_t) j },
                         { (uint8_t) new_i, (uint8_t) new_j }
                 };
                 move_list.push_back(move);
             }
-            if (board->pos[new_i][new_j] != EMPTY) {
+            if (get_piece(board, new_i, new_j) != EMPTY) {
                 break;
             }
         }
@@ -82,38 +82,38 @@ std::vector<Move> get_valid_bishop_moves(Board *board, int i, int j) {
 std::vector<Move> get_valid_knight_moves(Board *board, int i, int j) {
     std::vector<Move> move_list;
 
-    int color = board->pos[i][j] % 2;
+    int color = get_piece(board, i, j) % 2;
 
     int new_i = i+1; int new_j = j+2;
-    if (is_inside_board(board, new_i, new_j) && (board->pos[new_i][new_j] == EMPTY || board->pos[new_i][new_j] % 2 != color))
+    if (is_inside_board(board, new_i, new_j) && (get_piece(board, new_i, new_j) == EMPTY || get_piece(board, new_i, new_j) % 2 != color))
         move_list.push_back(Move{ { (uint8_t) i, (uint8_t) j }, { (uint8_t) new_i, (uint8_t) new_j } });
 
     new_i = i+1; new_j = j-2;
-    if (is_inside_board(board, new_i, new_j) && (board->pos[new_i][new_j] == EMPTY || board->pos[new_i][new_j] % 2 != color))
+    if (is_inside_board(board, new_i, new_j) && (get_piece(board, new_i, new_j) == EMPTY || get_piece(board, new_i, new_j) % 2 != color))
         move_list.push_back(Move{ { (uint8_t) i, (uint8_t) j }, { (uint8_t) new_i, (uint8_t) new_j } });
 
     new_i = i+2; new_j = j+1;
-    if (is_inside_board(board, new_i, new_j) && (board->pos[new_i][new_j] == EMPTY || board->pos[new_i][new_j] % 2 != color))
+    if (is_inside_board(board, new_i, new_j) && (get_piece(board, new_i, new_j) == EMPTY || get_piece(board, new_i, new_j) % 2 != color))
         move_list.push_back(Move{ { (uint8_t) i, (uint8_t) j }, { (uint8_t) new_i, (uint8_t) new_j } });
 
     new_i = i+2; new_j = j-1;
-    if (is_inside_board(board, new_i, new_j) && (board->pos[new_i][new_j] == EMPTY || board->pos[new_i][new_j] % 2 != color))
+    if (is_inside_board(board, new_i, new_j) && (get_piece(board, new_i, new_j) == EMPTY || get_piece(board, new_i, new_j) % 2 != color))
         move_list.push_back(Move{ { (uint8_t) i, (uint8_t) j }, { (uint8_t) new_i, (uint8_t) new_j } });
 
     new_i = i-2; new_j = j+1;
-    if (is_inside_board(board, new_i, new_j) && (board->pos[new_i][new_j] == EMPTY || board->pos[new_i][new_j] % 2 != color))
+    if (is_inside_board(board, new_i, new_j) && (get_piece(board, new_i, new_j) == EMPTY || get_piece(board, new_i, new_j) % 2 != color))
         move_list.push_back(Move{ { (uint8_t) i, (uint8_t) j }, { (uint8_t) new_i, (uint8_t) new_j } });
 
     new_i = i-2; new_j = j-1;
-    if (is_inside_board(board, new_i, new_j) && (board->pos[new_i][new_j] == EMPTY || board->pos[new_i][new_j] % 2 != color))
+    if (is_inside_board(board, new_i, new_j) && (get_piece(board, new_i, new_j) == EMPTY || get_piece(board, new_i, new_j) % 2 != color))
         move_list.push_back(Move{ { (uint8_t) i, (uint8_t) j }, { (uint8_t) new_i, (uint8_t) new_j } });
 
     new_i = i-1; new_j = j+2;
-    if (is_inside_board(board, new_i, new_j) && (board->pos[new_i][new_j] == EMPTY || board->pos[new_i][new_j] % 2 != color))
+    if (is_inside_board(board, new_i, new_j) && (get_piece(board, new_i, new_j) == EMPTY || get_piece(board, new_i, new_j) % 2 != color))
         move_list.push_back(Move{ { (uint8_t) i, (uint8_t) j }, { (uint8_t) new_i, (uint8_t) new_j } });
 
     new_i = i-1; new_j = j-2;
-    if (is_inside_board(board, new_i, new_j) && (board->pos[new_i][new_j] == EMPTY || board->pos[new_i][new_j] % 2 != color))
+    if (is_inside_board(board, new_i, new_j) && (get_piece(board, new_i, new_j) == EMPTY || get_piece(board, new_i, new_j) % 2 != color))
         move_list.push_back(Move{ { (uint8_t) i, (uint8_t) j }, { (uint8_t) new_i, (uint8_t) new_j } });
 
     return move_list;
@@ -122,20 +122,20 @@ std::vector<Move> get_valid_knight_moves(Board *board, int i, int j) {
 std::vector<Move> get_valid_rook_moves(Board *board, int i, int j) {
     std::vector<Move> move_list;
 
-    int color = board->pos[i][j] % 2;
+    int color = get_piece(board, i, j) % 2;
 
     for (int ii = 1; ii < 8; ii++) {
         int new_i = i+ii;
         int new_j = j;
         if (new_i >= 0 && new_i < 8 && new_j >= 0 && new_j < 8) {
-            if (board->pos[new_i][new_j] == EMPTY || board->pos[new_i][new_j] % 2 != color) {
+            if (get_piece(board, new_i, new_j) == EMPTY || get_piece(board, new_i, new_j) % 2 != color) {
                 Move move = {
                         { (uint8_t) i, (uint8_t) j },
                         { (uint8_t) new_i, (uint8_t) new_j }
                 };
                 move_list.push_back(move);
             }
-            if (board->pos[new_i][new_j] != EMPTY) {
+            if (get_piece(board, new_i, new_j) != EMPTY) {
                 break;
             }
         }
@@ -145,14 +145,14 @@ std::vector<Move> get_valid_rook_moves(Board *board, int i, int j) {
         int new_i = i-ii;
         int new_j = j;
         if (new_i >= 0 && new_i < 8 && new_j >= 0 && new_j < 8) {
-            if (board->pos[new_i][new_j] == EMPTY || board->pos[new_i][new_j] % 2 != color) {
+            if (get_piece(board, new_i, new_j) == EMPTY || get_piece(board, new_i, new_j) % 2 != color) {
                 Move move = {
                         { (uint8_t) i, (uint8_t) j },
                         { (uint8_t) new_i, (uint8_t) new_j }
                 };
                 move_list.push_back(move);
             }
-            if (board->pos[new_i][new_j] != EMPTY) {
+            if (get_piece(board, new_i, new_j) != EMPTY) {
                 break;
             }
         }
@@ -162,14 +162,14 @@ std::vector<Move> get_valid_rook_moves(Board *board, int i, int j) {
         int new_i = i;
         int new_j = j+ii;
         if (new_i >= 0 && new_i < 8 && new_j >= 0 && new_j < 8) {
-            if (board->pos[new_i][new_j] == EMPTY || board->pos[new_i][new_j] % 2 != color) {
+            if (get_piece(board, new_i, new_j) == EMPTY || get_piece(board, new_i, new_j) % 2 != color) {
                 Move move = {
                         { (uint8_t) i, (uint8_t) j },
                         { (uint8_t) new_i, (uint8_t) new_j }
                 };
                 move_list.push_back(move);
             }
-            if (board->pos[new_i][new_j] != EMPTY) {
+            if (get_piece(board, new_i, new_j) != EMPTY) {
                 break;
             }
         }
@@ -179,14 +179,14 @@ std::vector<Move> get_valid_rook_moves(Board *board, int i, int j) {
         int new_i = i;
         int new_j = j-ii;
         if (new_i >= 0 && new_i < 8 && new_j >= 0 && new_j < 8) {
-            if (board->pos[new_i][new_j] == EMPTY || board->pos[new_i][new_j] % 2 != color) {
+            if (get_piece(board, new_i, new_j) == EMPTY || get_piece(board, new_i, new_j) % 2 != color) {
                 Move move = {
                         { (uint8_t) i, (uint8_t) j },
                         { (uint8_t) new_i, (uint8_t) new_j }
                 };
                 move_list.push_back(move);
             }
-            if (board->pos[new_i][new_j] != EMPTY) {
+            if (get_piece(board, new_i, new_j) != EMPTY) {
                 break;
             }
         }
@@ -206,12 +206,12 @@ std::vector<Move> get_valid_queen_moves(Board *board, int i, int j) {
 std::vector<Move> get_valid_pawn_moves(Board *board, int i, int j) {
     std::vector<Move> move_list;
 
-    int color = board->pos[i][j] % 2;
+    int color = get_piece(board, i, j) % 2;
 
     if (color == 1) { // white
         int new_i = i-1;
         int new_j = j;
-        if (board->pos[new_i][new_j] == EMPTY) {
+        if (get_piece(board, new_i, new_j) == EMPTY) {
             Move move = {
                     { (uint8_t) i, (uint8_t) j },
                     { (uint8_t) new_i, (uint8_t) new_j }
@@ -219,7 +219,7 @@ std::vector<Move> get_valid_pawn_moves(Board *board, int i, int j) {
             move_list.push_back(move);
         }
 
-        if (i == 6 && board->pos[new_i][new_j] == EMPTY) {
+        if (i == 6 && get_piece(board, new_i, new_j) == EMPTY) {
             new_i = i-2;
             Move move = {
                     { (uint8_t) i, (uint8_t) j },
@@ -230,7 +230,7 @@ std::vector<Move> get_valid_pawn_moves(Board *board, int i, int j) {
 
         new_i = i-1;
         new_j = j-1;
-        if (board->pos[new_i][new_j] != EMPTY && board->pos[new_i][new_j] % 2 != color) {
+        if (has_piece(board, new_i, new_j) && get_piece(board, new_i, new_j) % 2 != color) {
             Move move = {
                     { (uint8_t) i, (uint8_t) j },
                     { (uint8_t) new_i, (uint8_t) new_j }
@@ -240,7 +240,7 @@ std::vector<Move> get_valid_pawn_moves(Board *board, int i, int j) {
 
         new_i = i-1;
         new_j = j+1;
-        if (board->pos[new_i][new_j] != EMPTY && board->pos[new_i][new_j] % 2 != color) {
+        if (has_piece(board, new_i, new_j) && get_piece(board, new_i, new_j) % 2 != color) {
             Move move = {
                     { (uint8_t) i, (uint8_t) j },
                     { (uint8_t) new_i, (uint8_t) new_j }
@@ -270,7 +270,7 @@ std::vector<Move> get_valid_pawn_moves(Board *board, int i, int j) {
     } else { // black
         int new_i = i+1;
         int new_j = j;
-        if (board->pos[new_i][new_j] == EMPTY) {
+        if (get_piece(board, new_i, new_j) == EMPTY) {
             Move move = {
                     { (uint8_t) i, (uint8_t) j },
                     { (uint8_t) new_i, (uint8_t) new_j }
@@ -278,7 +278,7 @@ std::vector<Move> get_valid_pawn_moves(Board *board, int i, int j) {
             move_list.push_back(move);
         }
 
-        if (i == 1 && board->pos[new_i][new_j] == EMPTY) {
+        if (i == 1 && get_piece(board, new_i, new_j) == EMPTY) {
             new_i = i+2;
             Move move = {
                     { (uint8_t) i, (uint8_t) j },
@@ -289,7 +289,7 @@ std::vector<Move> get_valid_pawn_moves(Board *board, int i, int j) {
 
         new_i = i+1;
         new_j = j-1;
-        if (board->pos[new_i][new_j] != EMPTY && board->pos[new_i][new_j] % 2 != color) {
+        if (has_piece(board, new_i, new_j) && get_piece(board, new_i, new_j) % 2 != color) {
             Move move = {
                     { (uint8_t) i, (uint8_t) j },
                     { (uint8_t) new_i, (uint8_t) new_j }
@@ -299,7 +299,7 @@ std::vector<Move> get_valid_pawn_moves(Board *board, int i, int j) {
 
         new_i = i+1;
         new_j = j+1;
-        if (board->pos[new_i][new_j] != EMPTY && board->pos[new_i][new_j] % 2 != color) {
+        if (has_piece(board, new_i, new_j) && get_piece(board, new_i, new_j) % 2 != color) {
             Move move = {
                     { (uint8_t) i, (uint8_t) j },
                     { (uint8_t) new_i, (uint8_t) new_j }
@@ -334,12 +334,12 @@ std::vector<Move> get_valid_pawn_moves(Board *board, int i, int j) {
 std::vector<Move> get_valid_king_moves(Board *board, int i, int j) {
     std::vector<Move> move_list;
 
-    int color = board->pos[i][j] % 2;
+    int color = get_piece(board, i, j) % 2;
 
     for (int ii = -1; ii <= 1; ii++) {
         for (int jj = -1; jj <= 1; jj++) {
             int new_i = i+ii; int new_j = j+jj;
-            if (is_inside_board(board, new_i, new_j) && (board->pos[new_i][new_j] == EMPTY || board->pos[new_i][new_j] % 2 != color))
+            if (is_inside_board(board, new_i, new_j) && (get_piece(board, new_i, new_j) == EMPTY || get_piece(board, new_i, new_j) % 2 != color))
                 move_list.push_back(Move{ { (uint8_t) i, (uint8_t) j }, { (uint8_t) new_i, (uint8_t) new_j } });
         }
     }
@@ -352,7 +352,7 @@ static std::vector<Move> get_player_unsafe_attacks(Board *board, int color) {
     std::vector<Move> attacks;
     for (int ii = 0; ii < 8; ii++) {
         for (int jj = 0; jj < 8; jj++) {
-            if (board->pos[ii][jj] != EMPTY && board->pos[ii][jj] % 2 == color) {
+            if (has_piece(board, ii, jj) && get_piece(board, ii, jj) % 2 == color) {
                 std::vector<Move> tmp_list = get_valid_moves_from(board, ii, jj);
                 attacks.insert(attacks.begin(), tmp_list.begin(), tmp_list.end());
             }
@@ -363,9 +363,9 @@ static std::vector<Move> get_player_unsafe_attacks(Board *board, int color) {
 }
 
 std::vector<Move> get_valid_moves_from(Board *board, int i, int j) {
-    assert(board->pos[i][j] != EMPTY);
+    assert(has_piece(board, i, j));
 
-    ChessPiece piece = board->pos[i][j];
+    ChessPiece piece = get_piece(board, i, j);
 
     std::vector<Move> list;
 
@@ -419,7 +419,7 @@ std::vector<Move> get_valid_moves(Board *board, int color) {
 
     for (int ii = 0; ii < 8; ii++) {
         for (int jj = 0; jj < 8; jj++) {
-            if (board->pos[ii][jj] == EMPTY || board->pos[ii][jj] % 2 != color)
+            if (get_piece(board, ii, jj) == EMPTY || get_piece(board, ii, jj) % 2 != color)
                 continue;
 
             std::vector<Move> tmp_moves = get_valid_moves_from(board, ii, jj);
@@ -439,7 +439,7 @@ std::vector<Move> get_valid_moves(Board *board, int color) {
 void get_king_pos(Board *board, int color, int *king_i, int *king_j) {
     for (int ii = 0; ii < 8; ii++) {
         for (int jj = 0; jj < 8; jj++) {
-            if (board->pos[ii][jj] == BLACK_KING - color) {
+            if (get_piece(board, ii, jj) == BLACK_KING - color) {
                 *king_i = ii;
                 *king_j = jj;
                 return;

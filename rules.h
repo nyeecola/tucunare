@@ -4,6 +4,8 @@
 #include <cstdint>
 #include <vector>
 
+#include "utils.h"
+
 enum GameResult {
     RESULT_UNFINISHED,
     RESULT_WHITE_WON,
@@ -26,7 +28,7 @@ enum ChessPiece {
     WHITE_KING,
     BLACK_KING,
 
-    MAX_PIECES
+    INVALID_PIECE
 };
 
 struct Move {
@@ -40,11 +42,26 @@ struct Board {
     Move last_move;
 };
 
-inline bool is_white(ChessPiece c) { return c > 0 && c < MAX_PIECES && c % 2 == 0; }
-inline bool is_black(ChessPiece c) { return c > 0 && c < MAX_PIECES && c % 2 == 1; }
+inline bool is_white(ChessPiece c) { return c > 0 && c % 2 == 0; }
+inline bool is_black(ChessPiece c) { return c > 0 && c % 2 == 1; }
 inline int turn_color(Board *board) { return (board->pos[board->last_move.to[0]][board->last_move.to[1]] + 1) % 2; }
 
 inline bool is_inside_board(Board *board, int i, int j) { return (i >= 0 && i < 8 && j >= 0 && j < 8); }
+inline ChessPiece get_piece(Board *board, int i, int j) {
+    if (!is_inside_board(board, i, j)) {
+        return INVALID_PIECE;
+    } else {
+        return board->pos[i][j];
+    }
+}
+inline bool has_piece(Board *board, int i, int j) {
+    if (is_inside_board(board, i, j) && board->pos[i][j] != EMPTY) {
+        assert(board->pos[i][j] != INVALID_PIECE);
+        return true;
+    }
+    return false;
+}
+
 
 std::vector<Move> get_valid_bishop_moves(Board *board, int i, int j);
 std::vector<Move> get_valid_moves_from(Board *board, int i, int j);
