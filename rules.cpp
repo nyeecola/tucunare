@@ -451,12 +451,11 @@ void get_king_pos(Board *board, int color, int *king_i, int *king_j) {
 }
 
 void play_move(Board *board, Move move) {
+    //printf("Player %d plays: %c%d-%c%d\n", turn_color(board), 'h'-move.from[0], 7-move.from[1], 'h'-move.to[0], 7-move.to[1]);
     board->pos[move.to[0]][move.to[1]] = board->pos[move.from[0]][move.from[1]];
     board->pos[move.from[0]][move.from[1]] = EMPTY;
 
     board->last_move = move;
-
-    assert(!is_in_check(board, (turn_color(board)+1) % 2));
 }
 
 bool is_in_check(Board *board, int color) {

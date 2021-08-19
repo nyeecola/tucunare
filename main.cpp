@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
+#include <cassert>
 #include <vector>
 #include <random>
 #include <chrono>
@@ -86,6 +87,7 @@ int main() {
         // AI-1 move
         std::vector<Move> move_list = get_valid_moves(&board, 1);
         play_move(&board, move_list[std::rand() % move_list.size()]);
+        assert(!is_in_check(&board, 1));
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
         GameResult res = get_game_status(&board);
@@ -99,6 +101,7 @@ int main() {
         // AI-2 move
         move_list = get_valid_moves(&board, 0);
         play_move(&board, move_list[std::rand() % move_list.size()]);
+        assert(!is_in_check(&board, 0));
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
         res = get_game_status(&board);
