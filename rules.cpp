@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "rules.h"
 #include "utils.h"
 
@@ -345,25 +347,33 @@ std::vector<Move> get_valid_king_moves_helper(Board *board, int i, int j) {
     return move_list;
 }
 
+// Note: Not all of these moves are valid, does not take into account moves that would put the player in check.
+static std::vector<Move> get_player_unsafe_attacks(Board *board, int color) {
+    std::vector<Move> attacks;
+    for (int ii = 0; ii < 8; ii++) {
+        for (int jj = 0; jj < 8; jj++) {
+            if (board->pos[ii][jj] != EMPTY && board->pos[ii][jj] % 2 == color) {
+                std::vector<Move> tmp_list = get_valid_moves_from(board, ii, jj, false);
+                attacks.insert(attacks.begin(), tmp_list.begin(), tmp_list.end());
+            }
+        }
+    }
+
+    return attacks;
+}
+
 std::vector<Move> get_valid_king_moves(Board *board, int i, int j, bool recurse) {
     std::vector<Move> king_moves = get_valid_king_moves_helper(board, i, j);
 
     if (recurse) {
-        std::vector<Move> king_danger;
-        for (int ii = 0; ii < 8; ii++) {
-            for (int jj = 0; jj < 8; jj++) {
-                if (board->pos[i][j] != EMPTY && board->pos[ii][jj] % 2 == board->pos[i][j] % 2) {
-                    std::vector<Move> tmp_list = get_valid_moves_from(board, ii, jj, false);
-                    king_danger.insert(king_danger.begin(), tmp_list.begin(), tmp_list.end());
-                    for (int ll = 0; ll < king_moves.size(); ll++) {
-                        for (int kk = 0; kk < king_danger.size(); kk++) {
-                            if (king_danger[kk].to[0] == king_moves[ll].to[0] && king_danger[kk].to[1] == king_moves[ll].to[1]) {
-                                king_moves.erase(king_moves.begin()+ll);
-                                ll--;
-                                break;
-                            }
-                        }
-                    }
+        std::vector<Move> adv_attacks = get_player_unsafe_attacks(board, (board->pos[i][j] + 1) % 2);
+
+        for (int ll = 0; ll < king_moves.size(); ll++) {
+            for (int kk = 0; kk < adv_attacks.size(); kk++) {
+                if (adv_attacks[kk].to[0] == king_moves[ll].to[0] && adv_attacks[kk].to[1] == king_moves[ll].to[1]) {
+                    king_moves.erase(king_moves.begin()+ll);
+                    ll--;
+                    break;
                 }
             }
         }
@@ -373,6 +383,8 @@ std::vector<Move> get_valid_king_moves(Board *board, int i, int j, bool recurse)
 }
 
 std::vector<Move> get_valid_moves_from(Board *board, int i, int j, bool recurse) {
+    assert(board->pos[i][j] != EMPTY);
+
     ChessPiece piece = board->pos[i][j];
 
     std::vector<Move> list;
@@ -412,9 +424,20 @@ std::vector<Move> get_valid_moves_from(Board *board, int i, int j, bool recurse)
     return list;
 }
 
+bool would_remain_in_check(Board *board, int color, Move move) {
+    Board b;
+    memcpy(&b, board, sizeof(b));
+
+    play_move(&b, move);
+
+    return is_in_check(&b, color);
+}
+
 // TODO: force player to prevent check
 std::vector<Move> get_valid_moves(Board *board, int color) {
     std::vector<Move> move_list;
+
+    bool in_check = is_in_check(board, color);
 
     for (int ii = 0; ii < 8; ii++) {
         for (int jj = 0; jj < 8; jj++) {
@@ -423,14 +446,63 @@ std::vector<Move> get_valid_moves(Board *board, int color) {
 
             std::vector<Move> tmp_moves = get_valid_moves_from(board, ii, jj);
 
-            move_list.insert(move_list.end(), tmp_moves.begin(), tmp_moves.end());
+            for (auto & move : tmp_moves) {
+                if (in_check && would_remain_in_check(board, color, move))
+                    continue;
+
+                move_list.push_back(move);
+            }
         }
     }
 
     return move_list;
 }
 
+void get_king_pos(Board *board, int color, int *king_i, int *king_j) {
+    for (int ii = 0; ii < 8; ii++) {
+        for (int jj = 0; jj < 8; jj++) {
+            if (board->pos[ii][jj] == BLACK_KING - color) {
+                *king_i = ii;
+                *king_j = jj;
+                return;
+            }
+        }
+    }
+
+    unreachable("King not found inside the board!");
+}
+
 void play_move(Board *board, Move move) {
     board->pos[move.to[0]][move.to[1]] = board->pos[move.from[0]][move.from[1]];
     board->pos[move.from[0]][move.from[1]] = EMPTY;
+}
+
+bool is_in_check(Board *board, int color) {
+    int king_i = 0, king_j = 0;
+    get_king_pos(board, color, &king_i, &king_j);
+
+    std::vector<Move> adv_attacks = get_player_unsafe_attacks(board, (color + 1) % 2);
+
+    for (auto & adv_attack : adv_attacks) {
+        if (adv_attack.to[0] == king_i && adv_attack.to[1] == king_j) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool is_mated(Board *board, int color) {
+    if (!is_in_check(board, color))
+        return false;
+
+    std::vector<Move> move_list = get_valid_moves(board, 1);
+
+    for (auto & move : move_list) {
+        if (!would_remain_in_check(board, color, move)) {
+            return false;
+        }
+    }
+
+    return true;
 }

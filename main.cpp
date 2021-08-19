@@ -83,8 +83,6 @@ int main() {
 
     // main loop
     while (true) {
-        // int color = (board->pos[board->last_move.to[0]][board->last_move.to[1]] + 1) % 2;
-
         // AI-1 move
         std::vector<Move> move_list = get_valid_moves(&board, 1);
         play_move(&board, move_list[std::rand() % move_list.size()]);
