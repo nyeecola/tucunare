@@ -451,6 +451,9 @@ void get_king_pos(Board *board, int color, int *king_i, int *king_j) {
 }
 
 void play_move(Board *board, Move move) {
+    assert(has_piece(board, move.from[0], move.from[1]));
+    assert(is_inside_board(board, move.to[0], move.to[1]));
+
     //printf("Player %d plays: %c%d-%c%d\n", turn_color(board), 'h'-move.from[0], 7-move.from[1], 'h'-move.to[0], 7-move.to[1]);
     board->pos[move.to[0]][move.to[1]] = board->pos[move.from[0]][move.from[1]];
     board->pos[move.from[0]][move.from[1]] = EMPTY;
