@@ -1,0 +1,4 @@
+- Castling
+- Promotions
+- Stalemate
+- Checkmate
