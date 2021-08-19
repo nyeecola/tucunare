@@ -1,8 +1,12 @@
 #include <iostream>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
 #include <cstdio>
 #include <vector>
+#include <random>
+#include <chrono>
+#include <thread>
 
 #include "rules.h"
 #include "utils.h"
@@ -46,8 +50,9 @@ char char_representation(ChessPiece c) {
 }
 
 void draw_board(Board *board) {
+    puts(" ");
     for (int i = 7; i >= 0; i--) {
-        for (int j = 7; j >= 0; j--) {
+        for (int j = 0; j < 8; j++) {
             printf("%c ", char_representation(board->pos[i][j]));
         }
         printf("\n");
@@ -70,10 +75,32 @@ void initialize_board(Board *board) {
 }
 
 int main() {
+    std::srand(std::time(nullptr));
+
     Board board = {};
 
     initialize_board(&board);
-    draw_board(&board);
+
+    // main loop
+    while (true) {
+        // int color = (board->pos[board->last_move.to[0]][board->last_move.to[1]] + 1) % 2;
+
+        // AI-1 move
+        std::vector<Move> move_list = get_valid_moves(&board, 1);
+        play_move(&board, move_list[std::rand() % move_list.size()]);
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
+        // render
+        draw_board(&board);
+
+        // AI-2 move
+        move_list = get_valid_moves(&board, 0);
+        play_move(&board, move_list[std::rand() % move_list.size()]);
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
+        // render
+        draw_board(&board);
+    }
 
     return 0;
 }
