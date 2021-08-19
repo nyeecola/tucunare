@@ -1,4 +1,4 @@
 - Castling
 - Promotions
-- Stalemate
-- Checkmate
+- Draw by Threefold repetition
+- Draw by 50-move rule

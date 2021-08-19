@@ -86,7 +86,12 @@ int main() {
         // AI-1 move
         std::vector<Move> move_list = get_valid_moves(&board, 1);
         play_move(&board, move_list[std::rand() % move_list.size()]);
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
+        GameResult res = get_game_status(&board);
+        if (res != RESULT_UNFINISHED) {
+            print_game_result(res);
+        }
 
         // render
         draw_board(&board);
@@ -94,7 +99,12 @@ int main() {
         // AI-2 move
         move_list = get_valid_moves(&board, 0);
         play_move(&board, move_list[std::rand() % move_list.size()]);
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+
+        res = get_game_status(&board);
+        if (res != RESULT_UNFINISHED) {
+            print_game_result(res);
+        }
 
         // render
         draw_board(&board);

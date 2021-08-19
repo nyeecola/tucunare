@@ -331,7 +331,7 @@ std::vector<Move> get_valid_pawn_moves(Board *board, int i, int j) {
     return move_list;
 }
 
-std::vector<Move> get_valid_king_moves_helper(Board *board, int i, int j) {
+std::vector<Move> get_valid_king_moves(Board *board, int i, int j) {
     std::vector<Move> move_list;
 
     int color = board->pos[i][j] % 2;
@@ -353,7 +353,7 @@ static std::vector<Move> get_player_unsafe_attacks(Board *board, int color) {
     for (int ii = 0; ii < 8; ii++) {
         for (int jj = 0; jj < 8; jj++) {
             if (board->pos[ii][jj] != EMPTY && board->pos[ii][jj] % 2 == color) {
-                std::vector<Move> tmp_list = get_valid_moves_from(board, ii, jj, false);
+                std::vector<Move> tmp_list = get_valid_moves_from(board, ii, jj);
                 attacks.insert(attacks.begin(), tmp_list.begin(), tmp_list.end());
             }
         }
@@ -362,27 +362,7 @@ static std::vector<Move> get_player_unsafe_attacks(Board *board, int color) {
     return attacks;
 }
 
-std::vector<Move> get_valid_king_moves(Board *board, int i, int j, bool recurse) {
-    std::vector<Move> king_moves = get_valid_king_moves_helper(board, i, j);
-
-    if (recurse) {
-        std::vector<Move> adv_attacks = get_player_unsafe_attacks(board, (board->pos[i][j] + 1) % 2);
-
-        for (int ll = 0; ll < king_moves.size(); ll++) {
-            for (int kk = 0; kk < adv_attacks.size(); kk++) {
-                if (adv_attacks[kk].to[0] == king_moves[ll].to[0] && adv_attacks[kk].to[1] == king_moves[ll].to[1]) {
-                    king_moves.erase(king_moves.begin()+ll);
-                    ll--;
-                    break;
-                }
-            }
-        }
-    }
-
-    return king_moves;
-}
-
-std::vector<Move> get_valid_moves_from(Board *board, int i, int j, bool recurse) {
+std::vector<Move> get_valid_moves_from(Board *board, int i, int j) {
     assert(board->pos[i][j] != EMPTY);
 
     ChessPiece piece = board->pos[i][j];
@@ -414,7 +394,7 @@ std::vector<Move> get_valid_moves_from(Board *board, int i, int j, bool recurse)
             break;
         case WHITE_KING:
         case BLACK_KING:
-            list = get_valid_king_moves(board, i, j, recurse);
+            list = get_valid_king_moves(board, i, j);
             break;
         default:
             unreachable("Invalid piece!");
@@ -473,6 +453,10 @@ void get_king_pos(Board *board, int color, int *king_i, int *king_j) {
 void play_move(Board *board, Move move) {
     board->pos[move.to[0]][move.to[1]] = board->pos[move.from[0]][move.from[1]];
     board->pos[move.from[0]][move.from[1]] = EMPTY;
+
+    board->last_move = move;
+
+    assert(!is_in_check(board, (turn_color(board)+1) % 2));
 }
 
 bool is_in_check(Board *board, int color) {
@@ -503,4 +487,33 @@ bool is_mated(Board *board, int color) {
     }
 
     return true;
+}
+
+GameResult get_game_status(Board *board) {
+    if (is_mated(board, 0))
+        return RESULT_WHITE_WON;
+
+    if (is_mated(board, 1))
+        return RESULT_BLACK_WON;
+
+    if (get_valid_moves(board, turn_color(board)).size() == 0)
+        return RESULT_DRAW;
+
+    return RESULT_UNFINISHED;
+}
+
+void print_game_result(GameResult result) {
+    switch (result) {
+        case RESULT_WHITE_WON:
+            puts("White won!");
+            break;
+        case RESULT_BLACK_WON:
+            puts("Black won!");
+            break;
+        case RESULT_DRAW:
+            puts("Draw!");
+            break;
+        default:
+            break;
+    }
 }
