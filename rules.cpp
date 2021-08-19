@@ -424,7 +424,7 @@ std::vector<Move> get_valid_moves_from(Board *board, int i, int j, bool recurse)
     return list;
 }
 
-bool would_remain_in_check(Board *board, int color, Move move) {
+bool would_be_in_check(Board *board, int color, Move move) {
     Board b;
     memcpy(&b, board, sizeof(b));
 
@@ -437,8 +437,6 @@ bool would_remain_in_check(Board *board, int color, Move move) {
 std::vector<Move> get_valid_moves(Board *board, int color) {
     std::vector<Move> move_list;
 
-    bool in_check = is_in_check(board, color);
-
     for (int ii = 0; ii < 8; ii++) {
         for (int jj = 0; jj < 8; jj++) {
             if (board->pos[ii][jj] == EMPTY || board->pos[ii][jj] % 2 != color)
@@ -447,7 +445,7 @@ std::vector<Move> get_valid_moves(Board *board, int color) {
             std::vector<Move> tmp_moves = get_valid_moves_from(board, ii, jj);
 
             for (auto & move : tmp_moves) {
-                if (in_check && would_remain_in_check(board, color, move))
+                if (would_be_in_check(board, color, move))
                     continue;
 
                 move_list.push_back(move);
@@ -499,7 +497,7 @@ bool is_mated(Board *board, int color) {
     std::vector<Move> move_list = get_valid_moves(board, 1);
 
     for (auto & move : move_list) {
-        if (!would_remain_in_check(board, color, move)) {
+        if (!would_be_in_check(board, color, move)) {
             return false;
         }
     }
